@@ -42,9 +42,30 @@ the first story at least in half.
 
 Run this as:
 
-Please start a subagent using the /jit-task-audit skill to review @spec-002/tasks.md
+Please use the jit-task-audit skill to review @spec-002/tasks.md
+(you can do this in a subagent to save room in your context window)
 
 It will give you a list of suggestions and then you can tell it to apply the suggestions to the plan.
+
+
+## value-delivery-audit
+
+This skill pairs with jit-task-audit to help refactor task breakdowns.
+jit-task-audit looks for tasks that are occuring too early in a task breakdown.
+value-delivery-audit looks for tasks that are occuring too late in a task breakdown.
+
+As an example, you might add a feature to implement some new kind of data input.
+The data input should affect the dashboard of your product, but a lot of times things like
+updating the dashboard get written near the end of the task breakdowns, even if the change
+is introduced in the very first user story.  This skill finds these and produces a 
+list of recommended changes to the task breakdown.
+
+You can review the recommendations and then ask the coding agent to implement the recommendations.
+
+Run this as:
+
+Please use the value-delivery-audit to review @spec-002/tasks.md
+
 
 
 
