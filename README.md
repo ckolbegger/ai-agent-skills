@@ -67,5 +67,14 @@ Run this as:
 Please use the value-delivery-audit to review @spec-002/tasks.md
 
 
+## test-case-enhancer
+
+This skill will examine a task breakdown and add test cases that
+should be implemented for each task as a series of "it should..." statements.
+You can run it against the whole file, or tell it which parts of the file to enhance.
+
+Sample command:
+
+Use the test-case-enhancer skill to update the tasks in Phase 4 US2 of @specs/002-short-put-strategy/tasks.md
 
 
