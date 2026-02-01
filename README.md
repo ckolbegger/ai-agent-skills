@@ -77,4 +77,10 @@ Sample command:
 
 Use the test-case-enhancer skill to update the tasks in Phase 4 US2 of @specs/002-short-put-strategy/tasks.md
 
+## handoff
 
+This skill helps to provide continuity across multiple sessions.
+When your context window is getting full use this skill and it
+will create a document that you can have a new session read and
+pick up work at the same point.  For me, this has worked much
+better than relying on claude code's /compact.  
