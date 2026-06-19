@@ -1,9 +1,16 @@
 ---
 name: test-case-enhancer
-description: Enhance task breakdowns with comprehensive test coverage. Adds unit test descriptions to tasks, identifies tasks needing integration tests, and ensures story-level integration coverage for critical user flows.
+description: >
+  Enhance task breakdowns with comprehensive test coverage — adding "it should..." unit test descriptions to each task, identifying tasks that need integration tests, and ensuring story-level integration coverage for critical user flows. Invoke this skill proactively whenever a tasks file or implementation plan is present and lacks explicit test descriptions, especially after running jit-task-audit or value-delivery-audit, and before implementation begins. Don't wait to be asked — if a plan is about to be implemented without spelled-out tests, offer this enhancement.
+argument-hint: [path-to-tasks-file]
+context: fork
+agent: general-purpose
+effort: high
 ---
 
 # Test Case Enhancer Skill
+
+> **Run this skill in a subagent.** Spawn a subagent with the tasks file and this skill, perform the enhancement there (editing the tasks file on disk), then return only the enhancement report to the main conversation. This keeps the main context window clean. *(On Claude Code this is enforced automatically via `context: fork`. On other CLIs, please spawn a subagent manually.)*
 
 ## Purpose
 
@@ -12,13 +19,12 @@ Ensure every implementation task and user story has comprehensive test coverage 
 2. Identifying tasks that coordinate multiple components and adding integration test tasks for them
 3. Ensuring each story has end-to-end integration test coverage for critical user flows
 
-## When to Use This Skill
+## Finding the Tasks File
 
-Invoke this skill when:
-- After generating a tasks.md or implementation plan
-- Before starting implementation
-- When reviewing task breakdowns for test completeness
-- After `/speckit.tasks` generates initial tasks
+1. **Argument** — if a path was provided as an argument, use that.
+2. **Current conversation context** — if the conversation references a specific tasks file (by name or path), use that.
+3. **Common filenames in the current directory** — look for `tasks.md`, `TODO.md`, `TASKS.md`, or any `.md` file whose name suggests a task breakdown.
+4. **Ask** — if nothing is found, ask the user to point you to the file before proceeding.
 
 ## Execution Flow
 
@@ -176,10 +182,3 @@ Different task types require different levels of test coverage:
 5. **Critical flows must be covered** - Happy path + validation + cross-component
 6. **Be specific** - "it should validate via PositionValidator" not "it should test validation"
 7. **Include boundary tests** - For validators, calculators, and input components
-
-## Integration with Other Skills
-
-Use this skill:
-- AFTER `/speckit.tasks` generates tasks
-- AFTER `/jit-task-audit` restructures tasks
-- BEFORE implementation begins

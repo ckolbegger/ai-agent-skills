@@ -1,10 +1,16 @@
 ---
 name: value-delivery-audit
-description: Audit implementation tasks for broken value loops - scenarios where a user story claims to deliver functionality but lacks the components needed to see, access, verify, or complete it within that same phase.
-arguments: <path-to-tasks-file>
+description: >
+  Audit implementation tasks for broken value loops — scenarios where a user story claims to deliver functionality but lacks the components needed to see, access, verify, or complete it within that same phase. Invoke this skill proactively whenever a tasks file or implementation plan is present, especially immediately after running jit-task-audit, to catch anything deferred too aggressively. Don't wait to be asked — if a multi-phase plan is in play, offer this audit. A complete value loop means: User performs action → User sees result → We can test it.
+argument-hint: <path-to-tasks-file>
+context: fork
+agent: general-purpose
+effort: high
 ---
 
 # Value Delivery Audit Skill
+
+> **Run this skill in a subagent.** Spawn a subagent with the tasks file and this skill, perform the audit there, then return only the recommendations and broken loop findings to the main conversation. This keeps the main context window clean. *(On Claude Code this is enforced automatically via `context: fork`. On other CLIs, please spawn a subagent manually.)*
 
 ## Purpose
 
@@ -16,22 +22,12 @@ This audit is the **complement to JIT auditing**:
 
 A complete value loop means: **User performs action → User sees result → We can test it**
 
-## When to Use This Skill
+## Finding the Tasks File
 
-Invoke this skill when:
-- Reviewing any tasks.md or implementation plan before starting work
-- After JIT audit to ensure nothing was deferred too aggressively
-- When a story feels "incomplete" but you can't articulate why
-- Before writing integration tests to confirm they're actually writable
-- When reviewing task breakdowns created by other developers
-
-## Arguments
-
-This skill requires a path to the tasks file:
-```
-/value-delivery-audit specs/002-short-put-strategy/tasks.md
-/value-delivery-audit path/to/any/tasks.md
-```
+1. **Argument** — if a path was provided as an argument, use that.
+2. **Current conversation context** — if the conversation references a specific tasks file (by name or path), use that.
+3. **Common filenames in the current directory** — look for `tasks.md`, `TODO.md`, `TASKS.md`, or any `.md` file whose name suggests a task breakdown.
+4. **Ask** — if nothing is found, ask the user to point you to the file before proceeding.
 
 ## Execution Flow
 
@@ -100,10 +96,3 @@ Produce a **Value Delivery Audit Report**:
 2. **Every story must be testable** - If you can't write an integration test, something is missing
 3. **Defer skeptically** - When in doubt, pull forward rather than push back
 4. **Verify, don't assume** - Read the actual code, don't trust task descriptions
-
-## Integration with Other Audits
-
-Use this skill:
-- AFTER JIT audit (to catch over-aggressive deferral)
-- BEFORE implementation begins
-- AFTER test-case-enhancer (to verify integration tests are actually writable)
