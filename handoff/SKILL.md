@@ -1,6 +1,17 @@
+---
+name: handoff
+description: >
+  Generate a comprehensive handoff document that captures the current state of work for continuity across coding sessions — covering the goal, progress, what worked, what failed, key decisions, open questions, and next steps. This is a manual-only skill: run it when you explicitly ask, typically before ending a session, before resetting a long context, or when switching between major phases of work. It depends on the current conversation, so it must run in the main context (never in a subagent).
+argument-hint: [output-path]
+disable-model-invocation: true
+effort: xhigh
+---
+
 # Handoff Document Generator
 
 Generate a comprehensive handoff document for continuity across coding sessions.
+
+> **Run this skill in the main conversation, not a subagent.** It synthesizes the handoff primarily from the current conversation history (goal, decisions, what worked/failed, open questions). A subagent would start with a clean context and miss all of that, so this skill must run inline.
 
 ## Usage
 
@@ -8,42 +19,38 @@ Generate a comprehensive handoff document for continuity across coding sessions.
 /handoff [output-path]
 ```
 
-- `output-path`: Optional. Defaults to `handoff.md` in current directory or `specs/XXX-feature/handoff.md` if in a feature directory.
-
-## When to Use
-
-- Before ending a session to capture current state
-- Before context gets too long and needs reset
-- When switching between major phases (spec → plan → implementation)
-- When handing off to another developer or AI assistant
+- `output-path`: Optional. Defaults to `handoff.md` in the current directory, or alongside the relevant feature/spec files if the project organizes work that way.
 
 ## Execution Steps
 
 1. **Determine output path**:
-   - Use provided path if given
-   - If in `specs/XXX-feature/` directory, use `handoff.md` in that directory
-   - Otherwise use `handoff.md` in current directory
+   - Use the provided path if given
+   - If the work lives in a dedicated feature/spec directory, write `handoff.md` there
+   - Otherwise use `handoff.md` in the current directory
 
 2. **Gather context**:
    - Get current git branch: `git branch --show-current`
    - Check branch push status: `git status` and `git log origin/BRANCH..HEAD`
-   - Look for spec files: `specs/*/spec.md`, `specs/*/plan.md`, `specs/*/research.md`
-   - Check for any tags: `git tag --points-at HEAD`
    - List modified/staged files: `git status --short`
+   - Check for any tags: `git tag --points-at HEAD`
+   - Look for planning/spec artifacts the project uses (e.g. spec, plan, research, design, or task files) and reference whatever exists
 
-3. **Extract information from conversation history**:
-   - Feature/project name
+3. **Identify the work in scope**:
+   - Derive the feature(s) being worked on from the conversation history and git status (branch name, recent commits, modified files) — don't assume any particular framework or directory layout
+   - A session may touch more than one feature; capture each
+
+4. **Extract information from conversation history**:
    - Goal/purpose of the work
-   - Phases completed (Spec, Plan, Research, Implementation, etc.)
+   - Phases completed (e.g. Spec, Plan, Research, Implementation)
    - Approaches that worked well
    - Approaches that failed or were rejected
    - Key technology/architecture decisions made
    - Open questions or blockers
    - Next steps discussed
 
-4. **Generate handoff document** using the template below
+5. **Generate handoff document** using the template below
 
-5. **Write file** and confirm to user
+6. **Write file** and confirm to user
 
 ## Output Template
 
@@ -65,9 +72,9 @@ Generate a comprehensive handoff document for continuity across coding sessions.
 
 | Phase | Status | Artifacts |
 |-------|--------|-----------|
-| **Spec** | [Complete/In Progress/Not Started] | `specs/XXX-feature/spec.md` |
-| **Plan** | [Complete/In Progress/Not Started] | `specs/XXX-feature/plan.md` |
-| **Research** | [Complete/In Progress/Not Started] | `specs/XXX-feature/research.md` |
+| **Spec** | [Complete/In Progress/Not Started] | [path to spec artifact, if any] |
+| **Plan** | [Complete/In Progress/Not Started] | [path to plan artifact, if any] |
+| **Research** | [Complete/In Progress/Not Started] | [path to research artifact, if any] |
 | **Implementation** | [Complete/In Progress/Not Started] | [key files] |
 
 [Brief description of what was accomplished in this session]
